@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useMiistaService as MiistaService } from '../services/miista-service';
 import Loader from '../components/Loader';
 import Products from "../components/Products";
 import Pagination from "../components/Pagination";
-import { useMiistaService as MiistaService } from '../services/miista-service';
-import { data } from '../services/miista-export.json';
+import Header from "../components/Header";
+import Filter from "../components/Filter";
 
 const DashboardPage = () => {
     const [miistaService] = MiistaService();
@@ -11,7 +12,7 @@ const DashboardPage = () => {
     //display items
     const [loading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
-   
+
     //pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(30)
@@ -19,6 +20,9 @@ const DashboardPage = () => {
     const indexOfLastPost = currentPage * itemsPerPage;
     const indexOfFirstPost = indexOfLastPost - itemsPerPage;
     const currentItems = items.slice(indexOfFirstPost, indexOfLastPost)
+
+    // show filter
+    const [showFilter, setShowFilter] = useState(false);
 
     const fetchData = async () => {
         setLoading(true);
@@ -41,12 +45,20 @@ const DashboardPage = () => {
 
     return (
         <div className="container mx-auto">
+            <Header
+                showFilter={showFilter}
+                setShowFilter={setShowFilter}
+            />
+
+            {showFilter && <Filter />}
+
             {loading ?
                 <Loader /> :
                 <Products
                     items={currentItems}
                 />
             }
+
             <Pagination
                 itemsPerPage={itemsPerPage}
                 totalItems={items.length}
