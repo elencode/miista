@@ -30,7 +30,7 @@ const DashboardPage = () => {
     })
 
     // filter by category
-    const [category, setCategory] = useState();
+    const [category, setCategory] = useState('All');
 
     const fetchData = async () => {
         setLoading(true);
@@ -38,7 +38,7 @@ const DashboardPage = () => {
         if (category !== 'All') {
             setCurrentPage(1);
             setItems(data.allContentfulProductPage.edges.filter(product => {
-                return product.node?.categoryTags?.includes(category)
+                return product.node?.name?.includes(category)
             }))
         }
         else setItems(data.allContentfulProductPage.edges.filter(product => {
@@ -49,7 +49,8 @@ const DashboardPage = () => {
     }
 
     useEffect(() => {
-        fetchData()
+        fetchData();
+        // eslint-disable-next-line
     }, [category]);
 
     //change page
@@ -57,15 +58,19 @@ const DashboardPage = () => {
         setCurrentPage(pageNumber)
     }
 
+    console.log('category', category)
+    console.log('filter', filter)
+    console.log('items', items)
     const applyFilter = () => {
-        // setItems(items.filter(product => {
-        //     return (product.node?.colorFamily?.map(item => item.name)?.includes(filter.color))
-        // }))
         setItems(items.filter(product => {
-            return (product.node?.shopifyProductEu.variants.edges[0].node.price >= filter.priceFrom
-                && product.node?.shopifyProductEu.variants.edges[0].node.price <= filter.priceTo)
+            return (product.node?.colorFamily?.map(item => item.name)?.includes(filter.color))
+
         }))
-        // setShowFilter(!showFilter);
+        // setItems(items.filter(product => {
+        //     return (product.node?.shopifyProductEu.variants.edges[0].node.price >= filter.priceFrom
+        //         && product.node?.shopifyProductEu.variants.edges[0].node.price <= filter.priceTo)
+        // }))
+        setShowFilter(!showFilter);
     }
 
     const clearFilter = () => {

@@ -7,9 +7,7 @@ export const CATEGORIES = [
     { id: 6, title: 'Mules' },
     { id: 7, title: 'Brogues' },
     { id: 8, title: 'Sneakers' },
-    { id: 9, title: 'Ballerinas' },
-    { id: 10, title: 'Outlet' },
-    { id: 11, title: 'New Arrivals' },
+    { id: 9, title: 'Ballerinas' }
 ]
 
 export const COLORS = [

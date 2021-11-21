@@ -4,7 +4,7 @@ import { COLORS } from '../constants/constants';
 const Filter = ({ filter, setFilter, applyFilter, clearFilter }) => {
 
     return (
-        <div className="bg-gray-100 w-1/3 absolute right-5 p-4 rounded">
+        <div className="bg-gray-100 sm:w-1/2 md:w-1/3 absolute md:right-5 p-4 rounded">
             <div className="flex gap-3 items-center justify-end mt-1 mb-3">
                 <p className="text-xs md:text-sm font-sans uppercase">Clear Filter</p>
                 <button onClick={clearFilter}>x</button>
