@@ -23,11 +23,25 @@ const DashboardPage = () => {
 
     // show filter
     const [showFilter, setShowFilter] = useState(false);
+    const [filter, setFilter] = useState({
+        color: '',
+        priceFrom: '',
+        priceTo: ''
+    })
+
+    // filter by category
+    const [category, setCategory] = useState();
 
     const fetchData = async () => {
         setLoading(true);
         const { data } = await miistaService.loadOptions();
-        setItems(data.allContentfulProductPage.edges.filter(product => {
+        if (category !== 'All') {
+            setCurrentPage(1);
+            setItems(data.allContentfulProductPage.edges.filter(product => {
+                return product.node?.categoryTags?.includes(category)
+            }))
+        }
+        else setItems(data.allContentfulProductPage.edges.filter(product => {
             return !product.node.categoryTags?.includes('Bags')
                 && !product.node.name?.includes('Phone Consultation')
         }))
@@ -36,11 +50,27 @@ const DashboardPage = () => {
 
     useEffect(() => {
         fetchData()
-    }, []);
+    }, [category]);
 
     //change page
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber)
+    }
+
+    const applyFilter = () => {
+        // setItems(items.filter(product => {
+        //     return (product.node?.colorFamily?.map(item => item.name)?.includes(filter.color))
+        // }))
+        setItems(items.filter(product => {
+            return (product.node?.shopifyProductEu.variants.edges[0].node.price >= filter.priceFrom
+                && product.node?.shopifyProductEu.variants.edges[0].node.price <= filter.priceTo)
+        }))
+        // setShowFilter(!showFilter);
+    }
+
+    const clearFilter = () => {
+        setFilter({ color: '', priceFrom: '', priceTo: '' });
+        setShowFilter(!showFilter);
     }
 
     return (
@@ -48,9 +78,23 @@ const DashboardPage = () => {
             <Header
                 showFilter={showFilter}
                 setShowFilter={setShowFilter}
+                category={category}
+                setCategory={setCategory}
+                items={items}
+                setItems={setItems}
             />
 
-            {showFilter && <Filter />}
+            {showFilter &&
+                <Filter
+                    items={items}
+                    setItems={setItems}
+                    showFilter={showFilter}
+                    setShowFilter={setShowFilter}
+                    filter={filter}
+                    setFilter={setFilter}
+                    applyFilter={applyFilter}
+                    clearFilter={clearFilter}
+                />}
 
             {loading ?
                 <Loader /> :

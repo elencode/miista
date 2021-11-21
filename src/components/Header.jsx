@@ -1,18 +1,18 @@
 import React from 'react';
 import { CATEGORIES } from '../constants/constants';
 
-const Header = ({ showFilter, setShowFilter }) => {
+const Header = ({ showFilter, setShowFilter, setCategory }) => {
+
     return (
         <div className="flex justify-between items-center my-6">
-            <ul className="mx-auto grid grid-cols-3 md:grid-cols-12 gap-3">
+            <div className="mx-auto grid grid-cols-3 md:grid-cols-12 gap-3">
                 {CATEGORIES.map(item => (
-                    <li key={item.id}>
-                        <a href="#" className="text-xs font-sans uppercase"
-                            onClick={() => { }}>{item.title}
-                        </a>
-                    </li>
+                    <button key={item.id} className="text-xs font-sans uppercase"
+                        onClick={() => setCategory(item.title)}>
+                        {item.title}
+                    </button>
                 ))}
-            </ul>
+            </div>
             <div>
                 <button className="text-xs font-sans uppercase"
                     onClick={() => setShowFilter(!showFilter)}>Filters</button>
