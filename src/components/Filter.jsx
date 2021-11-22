@@ -13,7 +13,7 @@ const Filter = ({ filter, setFilter, applyFilter, clearFilter }) => {
                 <p className="text-xs md:text-sm font-sans uppercase">Colour</p>
                 <ul className="flex space-x-2">
                     {COLORS.map(item => (
-                        <button key={item.idColor} className={`rounded-full border w-5 h-5 ${item.value === 'black' || item.value === 'white' ? `bg-${item.value}` : `bg-${item.value}-500`}`}
+                        <button key={item.idColor} className={`rounded-full border ${item.value === 'black' || item.value === 'white' ? `bg-${item.value}` : `bg-${item.value}-500`} ${filter.color === item.label ? 'w-7 h-7 -mt-2' : 'w-5 h-5 mt-0'}`}
                             onClick={() => setFilter({ ...filter, color: item.label })}>
                         </button>
                     ))}

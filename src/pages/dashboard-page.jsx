@@ -24,26 +24,33 @@ const DashboardPage = () => {
     // show filter
     const [showFilter, setShowFilter] = useState(false);
     const [filter, setFilter] = useState({
+        category: 'All',
         color: '',
         priceFrom: '',
         priceTo: ''
     })
 
-    // filter by category
-    const [category, setCategory] = useState('All');
-
     const fetchData = async () => {
         setLoading(true);
         const { data } = await miistaService.loadOptions();
-        if (category !== 'All') {
+        if (filter.category !== 'All') {
             setCurrentPage(1);
+            let array = data.allContentfulProductPage.edges.filter(product => {
+                return (product.node?.name?.includes(filter.category))
+            })
+            if (filter.color !== '') {
+                setItems(array.filter(item => item.node?.colorFamily?.map(item => item.name)?.includes(filter.color)));
+            } else setItems(array)
+        }
+        else if (filter.color !== '') {
             setItems(data.allContentfulProductPage.edges.filter(product => {
-                return product.node?.name?.includes(category)
+                return (!product.node.categoryTags?.includes('Bags')
+                    && !product.node.name?.includes('Phone Consultation') && (filter.color !== '' && product.node?.colorFamily?.map(item => item.name)?.includes(filter.color)))
             }))
         }
         else setItems(data.allContentfulProductPage.edges.filter(product => {
-            return !product.node.categoryTags?.includes('Bags')
-                && !product.node.name?.includes('Phone Consultation')
+            return (!product.node.categoryTags?.includes('Bags')
+                && !product.node.name?.includes('Phone Consultation'))
         }))
         setLoading(false);
     }
@@ -51,20 +58,16 @@ const DashboardPage = () => {
     useEffect(() => {
         fetchData();
         // eslint-disable-next-line
-    }, [category]);
+    }, [filter.category]);
 
     //change page
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber)
     }
 
-    console.log('category', category)
-    console.log('filter', filter)
-    console.log('items', items)
     const applyFilter = () => {
         setItems(items.filter(product => {
-            return (product.node?.colorFamily?.map(item => item.name)?.includes(filter.color))
-
+            return product.node?.colorFamily?.map(item => item.name)?.includes(filter.color)
         }))
         // setItems(items.filter(product => {
         //     return (product.node?.shopifyProductEu.variants.edges[0].node.price >= filter.priceFrom
@@ -74,7 +77,7 @@ const DashboardPage = () => {
     }
 
     const clearFilter = () => {
-        setFilter({ color: '', priceFrom: '', priceTo: '' });
+        setFilter({ ...filter, color: '', priceFrom: '', priceTo: '' });
         setShowFilter(!showFilter);
     }
 
@@ -83,8 +86,8 @@ const DashboardPage = () => {
             <Header
                 showFilter={showFilter}
                 setShowFilter={setShowFilter}
-                category={category}
-                setCategory={setCategory}
+                filter={filter}
+                setFilter={setFilter}
                 items={items}
                 setItems={setItems}
             />
